@@ -18,82 +18,90 @@ st.set_page_config(
 def inject_custom_css():
     st.markdown("""
         <style>
-        /* אנימציית רקע טכנולוגי זז - Deep Space Flow */
-        @keyframes gradientBG {
+        /* אנימציית רקיע טכנולוגי זז - Digital Skies */
+        @keyframes skyFlow {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
         .stApp {
-            background: linear-gradient(-45deg, #0f172a, #1e293b, #1e3a8a, #020617) !important;
+            /* רקע המדמה רקיע של רשתות נוירונים */
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+                linear-gradient(-45deg, #020617, #0f172a, #1e1b4b, #020617) !important;
             background-size: 400% 400% !important;
-            animation: gradientBG 15s ease infinite !important;
+            animation: skyFlow 20s ease-in-out infinite !important;
             color: #f8fafc !important;
         }
 
-        /* עיצוב כותרת טכנולוגית */
+        /* עיצוב כותרת טכנולוגית זוהרת */
         h1 {
-            color: #38bdf8 !important;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-weight: 800 !important;
+            color: #ffffff !important;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 900 !important;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.6), 0 0 40px rgba(37, 99, 235, 0.3);
             text-align: center;
+            padding: 20px;
         }
 
-        /* כרטיסיות זכוכית (Glassmorphism) */
+        /* כרטיסיות זכוכית (Glassmorphism) מותאמות לרקיע */
         .result-card {
-            background: rgba(255, 255, 255, 0.05) !important;
-            backdrop-filter: blur(15px) !important;
-            -webkit-backdrop-filter: blur(15px);
+            background: rgba(15, 23, 42, 0.6) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px);
             padding: 30px;
             border-radius: 20px !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-right: 10px solid #38bdf8 !important;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
             margin-bottom: 25px;
         }
 
-        /* כפתור "מנוע AI" עם אפקט זהירה */
+        /* כפתור "מנוע AI" עוצמתי */
         .stButton>button {
             width: 100%;
-            border-radius: 12px !important;
-            height: 3.8em;
-            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%) !important;
+            border-radius: 50px !important;
+            height: 4em;
+            background: linear-gradient(90deg, #38bdf8 0%, #2563eb 100%) !important;
             color: white !important;
             font-weight: bold !important;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             border: none !important;
             box-shadow: 0 0 20px rgba(37, 99, 235, 0.4) !important;
             transition: 0.4s !important;
         }
         .stButton>button:hover {
-            transform: scale(1.02) translateY(-2px) !important;
-            box-shadow: 0 0 30px rgba(14, 165, 233, 0.6) !important;
+            transform: scale(1.03) !important;
+            box-shadow: 0 0 35px rgba(56, 189, 248, 0.6) !important;
+            filter: brightness(1.1);
         }
 
-        /* תיבות סטטיסטיקה מעוצבות */
+        /* תיבות סטטיסטיקה - מראה של "חיישנים" */
         .stats-box {
-            background: rgba(15, 23, 42, 0.8) !important;
+            background: rgba(255, 255, 255, 0.03) !important;
             padding: 20px;
             border-radius: 15px !important;
             text-align: center;
-            border: 1px solid #38bdf8 !important;
+            border: 1px solid rgba(56, 189, 248, 0.3) !important;
             color: #38bdf8 !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.1);
         }
 
-        /* עיצוב Sidebar (פאנל ניהול) */
+        /* עיצוב Sidebar (פאנל ניהול) שקוף למחצה */
         [data-testid="stSidebar"] {
-            background: rgba(15, 23, 42, 0.9) !important;
-            backdrop-filter: blur(10px) !important;
-            border-right: 1px solid rgba(56, 189, 248, 0.2) !important;
+            background: rgba(2, 6, 23, 0.8) !important;
+            backdrop-filter: blur(12px) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
         }
 
         /* התאמת צבעי טקסט כלליים */
         .stMarkdown, p, span, label {
-            color: #e2e8f0 !important;
+            color: #cbd5e1 !important;
         }
         </style>
     """, unsafe_allow_html=True)

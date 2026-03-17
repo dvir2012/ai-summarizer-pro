@@ -18,24 +18,73 @@ st.set_page_config(
 def inject_custom_css():
     st.markdown("""
         <style>
-        .main { background-color: #f4f7f6; }
+        /* אנימציית רקע זז */
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .stApp {
+            background: linear-gradient(-45deg, #f0f4f8, #e1e8f0, #f8fafd, #dce4ee);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        /* עיצוב כותרת */
+        h1 {
+            color: #1e3a8a;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            letter-spacing: -1px;
+            text-align: center;
+        }
+
+        /* כפתור טכנולוגי עם אפקט זהירה */
         .stButton>button {
             width: 100%;
-            border-radius: 12px;
-            height: 3.5em;
-            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
-            color: white; font-weight: bold; border: none;
-            transition: 0.3s;
+            border-radius: 15px;
+            height: 3.8em;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            font-weight: bold;
+            border: none;
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+            transition: 0.4s;
         }
-        .stButton>button:hover { transform: scale(1.02); }
+        .stButton>button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(30, 64, 175, 0.5);
+            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+        }
+
+        /* כרטיסיות זכוכית (Glassmorphism) */
         .result-card {
-            background: white; padding: 25px; border-radius: 15px;
-            border-right: 10px solid #4b6cb7; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-right: 12px solid #3b82f6;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
         }
+
+        /* תיבות סטטיסטיקה */
         .stats-box {
-            background: #ffffff; padding: 15px; border-radius: 10px;
-            text-align: center; border: 1px solid #e0e0e0;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        /* עיצוב Sidebar */
+        [data-testid="stSidebar"] {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
         }
         </style>
     """, unsafe_allow_html=True)
@@ -71,12 +120,12 @@ def perform_sentiment_analysis(text):
     pos_score = sum(1 for word in positive_words if word in text.lower())
     neg_score = sum(1 for word in negative_words if word in text.lower())
     
-    if pos_score > neg_score: return "Positive 😊", "#28a745"
-    if neg_score > pos_score: return "Negative 😟", "#dc3545"
-    return "Neutral 😐", "#6c757d"
+    if pos_score > neg_score: return "Positive 😊", "#10b981"
+    if neg_score > pos_score: return "Negative 😟", "#ef4444"
+    return "Neutral 😐", "#64748b"
 
 # --- 4. ממשק משתמש (UI) ---
-st.title("Summarizer Elite Pro v5.0 🧬")
+st.markdown("<h1>Summarizer Elite Pro v5.0 🧬</h1>", unsafe_allow_html=True)
 
 with st.sidebar:
     st.header("⚙️ פאנל ניהול")
@@ -116,9 +165,9 @@ with tab1:
     with col_stats:
         if content:
             words = len(content.split())
-            st.markdown(f'<div class="stats-box"><h3>כמות מילים</h3><h2>{words}</h2></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="stats-box"><h3>כמות מילים</h3><h2 style="color:#1e40af">{words}</h2></div>', unsafe_allow_html=True)
             sentiment, color = perform_sentiment_analysis(content)
-            st.markdown(f'<div class="stats-box" style="border-top: 5px solid {color}"><h3>סנטימנט משוער</h3><h2 style="color:{color}">{sentiment}</h2></div>', unsafe_allow_html=True)
+            st.markdown(f'<br><div class="stats-box" style="border-top: 5px solid {color}"><h3>סנטימנט משוער</h3><h2 style="color:{color}">{sentiment}</h2></div>', unsafe_allow_html=True)
 
     if st.button("הפעל מנוע AI משולב ✨"):
         if not content or not final_api_key:
@@ -128,9 +177,8 @@ with tab1:
             st.session_state.analysis_results = []
             any_success = False
             
-            # לולאת Fallback חכמה
             for m_name in selected_models:
-                with st.spinner(f"מנסה לעבד במודל {m_name}..."):
+                with st.spinner(f"מעבד נתונים בטכנולוגיית {m_name.split('/')[-1]}..."):
                     try:
                         model = genai.GenerativeModel(m_name)
                         prompt = f"Summarize this in {lang} with {detail} detail: {content}"
@@ -138,7 +186,6 @@ with tab1:
                         resp = model.generate_content(prompt)
                         end = time.time()
                         
-                        # אם הגענו לכאן סימן שהצלחנו
                         res_data = {
                             "model": m_name, "text": resp.text,
                             "time": round(end-start, 2), "date": datetime.datetime.now().strftime("%H:%M")
@@ -147,15 +194,13 @@ with tab1:
                         st.session_state.history.append(res_data)
                         any_success = True
                         st.success(f"הצלחה עם מודל: {m_name}")
-                        break # מפסיקים לנסות מודלים אחרים ברגע שאחד הצליח
+                        break 
                     except Exception as e:
-                        # התעלמות שקטה מהשגיאה ומעבר למודל הבא
                         continue
             
             if not any_success:
-                st.error("כל המודלים שנבחרו נכשלו או חרגו ממכסת השימוש. נסה שוב בעוד דקה או בחר מודלים אחרים.")
+                st.error("כל המודלים חרגו מהמכסה. נסה שוב בעוד מספר רגעים.")
 
-    # הצגת תוצאות
     if st.session_state.analysis_results:
         for res in st.session_state.analysis_results:
             st.markdown(f'<div class="result-card">', unsafe_allow_html=True)
@@ -179,5 +224,5 @@ with tab2:
 with tab3:
     if st.session_state.history:
         df = pd.DataFrame(st.session_state.history)
-        fig = px.bar(df, x="model", y="time", title="זמני עיבוד לפי מודל (שניות)", color="model")
+        fig = px.bar(df, x="model", y="time", title="זמני עיבוד לפי מודל (שניות)", color="model", template="plotly_white")
         st.plotly_chart(fig)

@@ -18,91 +18,52 @@ st.set_page_config(
 def inject_custom_css():
     st.markdown("""
         <style>
-        /* אנימציית רקיע טכנולוגי זז - Digital Skies */
-        @keyframes skyFlow {
+        /* אנימציית רקע זז */
+        @keyframes gradientBg {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
         .stApp {
-            /* רקע המדמה רקיע של רשתות נוירונים */
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
-                linear-gradient(-45deg, #020617, #0f172a, #1e1b4b, #020617) !important;
-            background-size: 400% 400% !important;
-            animation: skyFlow 20s ease-in-out infinite !important;
-            color: #f8fafc !important;
+            background: linear-gradient(-45deg, #f0f4f8, #e2e8f0, #ffffff, #dbeafe);
+            background-size: 400% 400%;
+            animation: gradientBg 15s ease infinite;
         }
 
-        /* עיצוב כותרת טכנולוגית זוהרת */
-        h1 {
-            color: #ffffff !important;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: 900 !important;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 0 0 20px rgba(56, 189, 248, 0.6), 0 0 40px rgba(37, 99, 235, 0.3);
-            text-align: center;
-            padding: 20px;
-        }
-
-        /* כרטיסיות זכוכית (Glassmorphism) מותאמות לרקיע */
-        .result-card {
-            background: rgba(15, 23, 42, 0.6) !important;
-            backdrop-filter: blur(20px) !important;
-            -webkit-backdrop-filter: blur(20px);
-            padding: 30px;
-            border-radius: 20px !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-right: 10px solid #38bdf8 !important;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
-            margin-bottom: 25px;
-        }
-
-        /* כפתור "מנוע AI" עוצמתי */
+        /* עיצוב כפתור */
         .stButton>button {
             width: 100%;
-            border-radius: 50px !important;
-            height: 4em;
-            background: linear-gradient(90deg, #38bdf8 0%, #2563eb 100%) !important;
-            color: white !important;
-            font-weight: bold !important;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border: none !important;
-            box-shadow: 0 0 20px rgba(37, 99, 235, 0.4) !important;
-            transition: 0.4s !important;
+            border-radius: 12px;
+            height: 3.5em;
+            background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
+            color: white; font-weight: bold; border: none;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
         }
-        .stButton>button:hover {
-            transform: scale(1.03) !important;
-            box-shadow: 0 0 35px rgba(56, 189, 248, 0.6) !important;
-            filter: brightness(1.1);
+        .stButton>button:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3); }
+
+        /* כרטיסיית תוצאה */
+        .result-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 25px; 
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* תיבות סטטיסטיקה - מראה של "חיישנים" */
+        /* תיבות סטטיסטיקה */
         .stats-box {
-            background: rgba(255, 255, 255, 0.03) !important;
-            padding: 20px;
-            border-radius: 15px !important;
-            text-align: center;
-            border: 1px solid rgba(56, 189, 248, 0.3) !important;
-            color: #38bdf8 !important;
-            box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.1);
+            background: white; padding: 15px; border-radius: 10px;
+            text-align: center; border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
 
-        /* עיצוב Sidebar (פאנל ניהול) שקוף למחצה */
-        [data-testid="stSidebar"] {
-            background: rgba(2, 6, 23, 0.8) !important;
-            backdrop-filter: blur(12px) !important;
-            border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
-        }
-
-        /* התאמת צבעי טקסט כלליים */
-        .stMarkdown, p, span, label {
-            color: #cbd5e1 !important;
-        }
+        /* כיווניות טקסט */
+        .rtl-container { direction: rtl; text-align: right; }
+        .ltr-container { direction: ltr; text-align: left; }
         </style>
     """, unsafe_allow_html=True)
 
@@ -137,12 +98,12 @@ def perform_sentiment_analysis(text):
     pos_score = sum(1 for word in positive_words if word in text.lower())
     neg_score = sum(1 for word in negative_words if word in text.lower())
     
-    if pos_score > neg_score: return "Positive 😊", "#10b981"
-    if neg_score > pos_score: return "Negative 😟", "#ef4444"
-    return "Neutral 😐", "#38bdf8"
+    if pos_score > neg_score: return "Positive 😊", "#28a745"
+    if neg_score > pos_score: return "Negative 😟", "#dc3545"
+    return "Neutral 😐", "#6c757d"
 
 # --- 4. ממשק משתמש (UI) ---
-st.markdown("<h1>Summarizer Elite Pro v5.0 🧬</h1>", unsafe_allow_html=True)
+st.title("Summarizer Elite Pro v5.0 🧬")
 
 with st.sidebar:
     st.header("⚙️ פאנל ניהול")
@@ -182,9 +143,9 @@ with tab1:
     with col_stats:
         if content:
             words = len(content.split())
-            st.markdown(f'<div class="stats-box"><h3>כמות מילים</h3><h2 style="color:#38bdf8">{words}</h2></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="stats-box"><h3>כמות מילים</h3><h2>{words}</h2></div>', unsafe_allow_html=True)
             sentiment, color = perform_sentiment_analysis(content)
-            st.markdown(f'<br><div class="stats-box" style="border-top: 5px solid {color}"><h3>סנטימנט משוער</h3><h2 style="color:{color}">{sentiment}</h2></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="stats-box" style="border-top: 5px solid {color}"><h3>סנטימנט משוער</h3><h2 style="color:{color}">{sentiment}</h2></div>', unsafe_allow_html=True)
 
     if st.button("הפעל מנוע AI משולב ✨"):
         if not content or not final_api_key:
@@ -195,7 +156,7 @@ with tab1:
             any_success = False
             
             for m_name in selected_models:
-                with st.spinner(f"מעבד נתונים בטכנולוגיית {m_name.split('/')[-1]}..."):
+                with st.spinner(f"מנסה לעבד במודל {m_name}..."):
                     try:
                         model = genai.GenerativeModel(m_name)
                         prompt = f"Summarize this in {lang} with {detail} detail: {content}"
@@ -216,20 +177,28 @@ with tab1:
                         continue
             
             if not any_success:
-                st.error("כל המודלים חרגו מהמכסה. נסה שוב בעוד מספר רגעים.")
+                st.error("כל המודלים שנבחרו נכשלו או חרגו ממכסת השימוש. נסה שוב בעוד דקה או בחר מודלים אחרים.")
 
+    # הצגת תוצאות
     if st.session_state.analysis_results:
+        alignment_class = "rtl-container" if lang == "Hebrew" else "ltr-container"
+        border_side = "right" if lang == "Hebrew" else "left"
+        
         for res in st.session_state.analysis_results:
-            st.markdown(f'<div class="result-card">', unsafe_allow_html=True)
-            st.subheader(f"🤖 מודל: {res['model']}")
-            st.write(res['text'])
-            st.caption(f"⏱️ זמן עיבוד: {res['time']} שניות")
+            st.markdown(f'''
+                <div class="result-card" style="border-{border_side}: 10px solid #2563eb;">
+                    <div class="{alignment_class}">
+                        <h3 style="color: #1e3a8a;">🤖 מודל: {res['model']}</h3>
+                        <p style="font-size: 1.1rem; line-height: 1.6;">{res['text']}</p>
+                        <p style="color: gray; font-size: 0.8rem;">⏱️ זמן עיבוד: {res['time']} שניות</p>
+                    </div>
+                </div>
+            ''', unsafe_allow_html=True)
             
             c1, c2 = st.columns(2)
             c1.download_button("📥 הורד כ-TXT", res['text'], file_name=f"{res['model'].replace('/','_')}.txt", key=f"t_{res['model']}")
             docx_data = create_docx(res['text'], res['model'])
             c2.download_button("📄 הורד כ-Word", docx_data, file_name=f"{res['model'].replace('/','_')}.docx", key=f"d_{res['model']}")
-            st.markdown('</div>', unsafe_allow_html=True)
 
 with tab2:
     if st.session_state.history:
@@ -241,5 +210,5 @@ with tab2:
 with tab3:
     if st.session_state.history:
         df = pd.DataFrame(st.session_state.history)
-        fig = px.bar(df, x="model", y="time", title="זמני עיבוד לפי מודל (שניות)", color="model", template="plotly_dark")
+        fig = px.bar(df, x="model", y="time", title="זמני עיבוד לפי מודל (שניות)", color="model")
         st.plotly_chart(fig)

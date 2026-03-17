@@ -1,5 +1,5 @@
 import streamlit as st
-from openai import OpenAI
+import google.generativeai as genai  # החלפנו את openai בספרייה של גוגל
 
 # הגדרת דף ראשונית
 st.set_page_config(page_title="Summarizer AI Pro", page_icon="📝")
@@ -12,11 +12,13 @@ language = st.sidebar.selectbox("שפת הסיכום:", ["Hebrew", "English", "S
 style = st.sidebar.radio("סגנון:", ["נקודות (Bullet Points)", "פסקה (Paragraph)"])
 detail_level = st.sidebar.select_slider("רמת פירוט:", options=["תמציתי", "בינוני", "מפורט"])
 
-# חיבור ל-API
+# חיבור ל-API של גוגל
 try:
-    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-except:
-    st.error("מפתח ה-API לא נמצא בהגדרות המערכת!")
+    # שליפת המפתח מה-Secrets (נשתמש באותו שם מפתח כדי שלא תצטרך לשנות הגדרות ב-Streamlit)
+    genai.configure(api_key=st.secrets["OPENAI_API_KEY"])
+    model = genai.GenerativeModel('gemini-1.5-flash') # שימוש במודל מהיר ויעיל
+except Exception as e:
+    st.error(f"שגיאה בהגדרת המפתח: {e}")
     st.stop()
 
 # --- אזור הקלט ---
@@ -28,34 +30,30 @@ st.caption(f"📊 כמות מילים בטקסט: {word_count}")
 
 # --- לוגיקת הסיכום ---
 if st.button("התחל בסיכום ✨"):
-    # פיצ'ר: הגנה ובדיקת תקינות
     if word_count == 0:
         st.warning("נא להזין טקסט לסיכום.")
-    elif word_count > 2500:
-        st.error("הטקסט ארוך מדי (מעל 2500 מילים). נסה לפצל אותו.")
+    elif word_count > 10000: # Gemini תומך בטקסטים הרבה יותר ארוכים!
+        st.error("הטקסט ארוך מדי. נסה לקצר מעט.")
     else:
-        with st.spinner('הבינה המלאכותית מעבדת את המידע...'):
+        with st.spinner('הבינה המלאכותית של גוגל מעבדת את המידע...'):
             try:
-                # בניית פרומפט חכם שמשתמש בבחירות המשתמש
+                # בניית פרומפט מותאם ל-Gemini
                 prompt = (
                     f"Please summarize the following text in {language}. "
                     f"Use a {style} style with a {detail_level} level of detail.\n\n"
                     f"Text: {user_text}"
                 )
                 
-                response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
-                    messages=[{"role": "user", "content": prompt}]
-                )
-                
-                summary = response.choices[0].message.content
+                # קריאה ל-Gemini
+                response = model.generate_content(prompt)
+                summary = response.text
                 
                 # הצגת התוצאה
                 st.markdown("---")
                 st.subheader("הסיכום המוכן:")
                 st.write(summary)
                 
-                # פיצ'ר: כפתור הורדה
+                # כפתור הורדה
                 st.download_button(
                     label="הורד סיכום כקובץ טקסט 📥",
                     data=summary,
@@ -64,4 +62,4 @@ if st.button("התחל בסיכום ✨"):
                 )
                 
             except Exception as e:
-                st.error(f"שגיאה בתקשורת: {e}")
+                st.error(f"שגיאה בתקשורת עם Gemini: {e}")

@@ -18,73 +18,82 @@ st.set_page_config(
 def inject_custom_css():
     st.markdown("""
         <style>
-        /* אנימציית רקע זז */
-        @keyframes gradient {
+        /* אנימציית רקע טכנולוגי זז - Deep Space Flow */
+        @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
         .stApp {
-            background: linear-gradient(-45deg, #f0f4f8, #e1e8f0, #f8fafd, #dce4ee);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #1e3a8a, #020617) !important;
+            background-size: 400% 400% !important;
+            animation: gradientBG 15s ease infinite !important;
+            color: #f8fafc !important;
         }
 
-        /* עיצוב כותרת */
+        /* עיצוב כותרת טכנולוגית */
         h1 {
-            color: #1e3a8a;
-            font-family: 'Inter', sans-serif;
-            font-weight: 800;
-            letter-spacing: -1px;
+            color: #38bdf8 !important;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 800 !important;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
             text-align: center;
-        }
-
-        /* כפתור טכנולוגי עם אפקט זהירה */
-        .stButton>button {
-            width: 100%;
-            border-radius: 15px;
-            height: 3.8em;
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
-            color: white;
-            font-weight: bold;
-            border: none;
-            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
-            transition: 0.4s;
-        }
-        .stButton>button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(30, 64, 175, 0.5);
-            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
         }
 
         /* כרטיסיות זכוכית (Glassmorphism) */
         .result-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.05) !important;
+            backdrop-filter: blur(15px) !important;
+            -webkit-backdrop-filter: blur(15px);
             padding: 30px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            border-right: 12px solid #3b82f6;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            border-radius: 20px !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-right: 10px solid #38bdf8 !important;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5) !important;
             margin-bottom: 25px;
         }
 
-        /* תיבות סטטיסטיקה */
-        .stats-box {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 20px;
-            text-align: center;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        /* כפתור "מנוע AI" עם אפקט זהירה */
+        .stButton>button {
+            width: 100%;
+            border-radius: 12px !important;
+            height: 3.8em;
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%) !important;
+            color: white !important;
+            font-weight: bold !important;
+            border: none !important;
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.4) !important;
+            transition: 0.4s !important;
+        }
+        .stButton>button:hover {
+            transform: scale(1.02) translateY(-2px) !important;
+            box-shadow: 0 0 30px rgba(14, 165, 233, 0.6) !important;
         }
 
-        /* עיצוב Sidebar */
+        /* תיבות סטטיסטיקה מעוצבות */
+        .stats-box {
+            background: rgba(15, 23, 42, 0.8) !important;
+            padding: 20px;
+            border-radius: 15px !important;
+            text-align: center;
+            border: 1px solid #38bdf8 !important;
+            color: #38bdf8 !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        /* עיצוב Sidebar (פאנל ניהול) */
         [data-testid="stSidebar"] {
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(5px);
+            background: rgba(15, 23, 42, 0.9) !important;
+            backdrop-filter: blur(10px) !important;
+            border-right: 1px solid rgba(56, 189, 248, 0.2) !important;
+        }
+
+        /* התאמת צבעי טקסט כלליים */
+        .stMarkdown, p, span, label {
+            color: #e2e8f0 !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -122,7 +131,7 @@ def perform_sentiment_analysis(text):
     
     if pos_score > neg_score: return "Positive 😊", "#10b981"
     if neg_score > pos_score: return "Negative 😟", "#ef4444"
-    return "Neutral 😐", "#64748b"
+    return "Neutral 😐", "#38bdf8"
 
 # --- 4. ממשק משתמש (UI) ---
 st.markdown("<h1>Summarizer Elite Pro v5.0 🧬</h1>", unsafe_allow_html=True)
@@ -165,7 +174,7 @@ with tab1:
     with col_stats:
         if content:
             words = len(content.split())
-            st.markdown(f'<div class="stats-box"><h3>כמות מילים</h3><h2 style="color:#1e40af">{words}</h2></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="stats-box"><h3>כמות מילים</h3><h2 style="color:#38bdf8">{words}</h2></div>', unsafe_allow_html=True)
             sentiment, color = perform_sentiment_analysis(content)
             st.markdown(f'<br><div class="stats-box" style="border-top: 5px solid {color}"><h3>סנטימנט משוער</h3><h2 style="color:{color}">{sentiment}</h2></div>', unsafe_allow_html=True)
 
@@ -224,5 +233,5 @@ with tab2:
 with tab3:
     if st.session_state.history:
         df = pd.DataFrame(st.session_state.history)
-        fig = px.bar(df, x="model", y="time", title="זמני עיבוד לפי מודל (שניות)", color="model", template="plotly_white")
+        fig = px.bar(df, x="model", y="time", title="זמני עיבוד לפי מודל (שניות)", color="model", template="plotly_dark")
         st.plotly_chart(fig)

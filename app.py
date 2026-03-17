@@ -29,7 +29,7 @@ def inject_custom_css():
         }
         .stButton>button:hover { transform: scale(1.02); }
         .result-card {
-            background-white; padding: 25px; border-radius: 15px;
+            background: white; padding: 25px; border-radius: 15px;
             border-right: 10px solid #4b6cb7; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             margin-bottom: 20px;
         }
@@ -65,8 +65,6 @@ def create_docx(text, model_name):
     return bio.getvalue()
 
 def perform_sentiment_analysis(text):
-    # פונקציה פשוטה המדמה ניתוח סנטימנט לצורך התצוגה הויזואלית
-    # במערכת אמיתית נשתמש ב-AI כדי לקבוע זאת
     positive_words = ['good', 'great', 'excellent', 'positive', 'success', 'טוב', 'מעולה', 'הצלחה']
     negative_words = ['bad', 'poor', 'error', 'negative', 'failure', 'רע', 'גרוע', 'כישלון']
     
@@ -83,7 +81,6 @@ st.title("Summarizer Elite Pro v5.0 🧬")
 with st.sidebar:
     st.header("⚙️ פאנל ניהול")
     
-    # רשימת המודלים המדויקת שלך
     model_list = [
         'models/gemini-2.0-flash-001',
         'models/gemini-2.5-flash',
@@ -92,7 +89,7 @@ with st.sidebar:
         'models/gemini-1.5-pro'
     ]
     
-    selected_models = st.multiselect("בחר מודלים להרצה:", model_list, default=[model_list[0]])
+    selected_models = st.multiselect("בחר מודלים להרצה (לפי סדר עדיפות):", model_list, default=[model_list[0]])
     lang = st.selectbox("שפת הסיכום:", ["Hebrew", "English", "Spanish", "Russian"])
     detail = st.select_slider("רמת פירוט:", ["תמציתי", "מאוזן", "מפורט"])
     
@@ -129,9 +126,11 @@ with tab1:
         else:
             genai.configure(api_key=final_api_key)
             st.session_state.analysis_results = []
+            any_success = False
             
+            # לולאת Fallback חכמה
             for m_name in selected_models:
-                with st.spinner(f"מעבד במודל {m_name}..."):
+                with st.spinner(f"מנסה לעבד במודל {m_name}..."):
                     try:
                         model = genai.GenerativeModel(m_name)
                         prompt = f"Summarize this in {lang} with {detail} detail: {content}"
@@ -139,14 +138,22 @@ with tab1:
                         resp = model.generate_content(prompt)
                         end = time.time()
                         
+                        # אם הגענו לכאן סימן שהצלחנו
                         res_data = {
                             "model": m_name, "text": resp.text,
                             "time": round(end-start, 2), "date": datetime.datetime.now().strftime("%H:%M")
                         }
                         st.session_state.analysis_results.append(res_data)
                         st.session_state.history.append(res_data)
+                        any_success = True
+                        st.success(f"הצלחה עם מודל: {m_name}")
+                        break # מפסיקים לנסות מודלים אחרים ברגע שאחד הצליח
                     except Exception as e:
-                        st.error(f"שגיאה במודל {m_name}: {e}")
+                        # התעלמות שקטה מהשגיאה ומעבר למודל הבא
+                        continue
+            
+            if not any_success:
+                st.error("כל המודלים שנבחרו נכשלו או חרגו ממכסת השימוש. נסה שוב בעוד דקה או בחר מודלים אחרים.")
 
     # הצגת תוצאות
     if st.session_state.analysis_results:
@@ -157,9 +164,9 @@ with tab1:
             st.caption(f"⏱️ זמן עיבוד: {res['time']} שניות")
             
             c1, c2 = st.columns(2)
-            c1.download_button("📥 הורד כ-TXT", res['text'], file_name=f"{res['model']}.txt")
+            c1.download_button("📥 הורד כ-TXT", res['text'], file_name=f"{res['model'].replace('/','_')}.txt", key=f"t_{res['model']}")
             docx_data = create_docx(res['text'], res['model'])
-            c2.download_button("📄 הורד כ-Word", docx_data, file_name=f"{res['model']}.docx")
+            c2.download_button("📄 הורד כ-Word", docx_data, file_name=f"{res['model'].replace('/','_')}.docx", key=f"d_{res['model']}")
             st.markdown('</div>', unsafe_allow_html=True)
 
 with tab2:
